@@ -6,11 +6,7 @@ import android.os.Bundle;
 
 import com.example.taskmanager.R;
 
-public class TaskListActivity extends AppCompatActivity {
+public class TaskListActivity extends SingleFragmentActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task_list);
-    }
+
 }
