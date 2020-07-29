@@ -7,7 +7,7 @@ public interface RepositoryInterface<E> {
     void add(E e);
     void remove(E e);
     E get(UUID id);
-    void replace(E e);
+    void update(E e);
     List<E> getAll();
     void setAll(List<E> list);
 }
