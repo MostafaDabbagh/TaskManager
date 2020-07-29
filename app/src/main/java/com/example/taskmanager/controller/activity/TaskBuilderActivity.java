@@ -12,6 +12,6 @@ public class TaskBuilderActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {
-        return new TaskBuilderFragment();
+        return TaskBuilderFragment.newInstance();
     }
 }
