@@ -61,7 +61,9 @@ public class TaskBuilderFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String numberStr = String.valueOf(mEditTextNumber.getText());
-                Intent intent = TaskListActivity.newIntent(getActivity(),Integer.parseInt(numberStr));
+                String titleStr = String.valueOf(mEditTextTitle.getText());
+                Intent intent = TaskListActivity
+                        .newIntent(getActivity(),Integer.parseInt(numberStr), titleStr);
                 startActivity(intent);
             }
         });

@@ -13,15 +13,17 @@ import com.example.taskmanager.controller.fragment.TaskListFragment;
 public class TaskListActivity extends SingleFragmentActivity {
 
     public static final String EXTRA_NUMBER_OF_TASKS = "numberOfTasks";
+    public static final String EXTRA_TITLE = "title";
 
     @Override
     protected Fragment createFragment() {
         return TaskListFragment.newInstance();
     }
 
-    public static Intent newIntent(Context context, int numberOfTasks) {
+    public static Intent newIntent(Context context, int numberOfTasks, String title) {
         Intent intent = new Intent(context, TaskListActivity.class);
         intent.putExtra(EXTRA_NUMBER_OF_TASKS, numberOfTasks);
+        intent.putExtra(EXTRA_TITLE, title);
         return intent;
     }
 }
