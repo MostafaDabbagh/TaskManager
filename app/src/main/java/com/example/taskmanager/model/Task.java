@@ -12,6 +12,7 @@ public class Task {
     public Task(State state, String title) {
         mState = state;
         mTitle = title;
+        mId = UUID.randomUUID();
     }
 
     public State getState() {

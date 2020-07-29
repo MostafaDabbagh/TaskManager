@@ -1,5 +1,6 @@
 package com.example.taskmanager.controller.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.taskmanager.R;
+import com.example.taskmanager.controller.activity.TaskListActivity;
 
 public class TaskBuilderFragment extends Fragment {
 
@@ -58,8 +60,9 @@ public class TaskBuilderFragment extends Fragment {
         mButtonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
+                String numberStr = String.valueOf(mEditTextNumber.getText());
+                Intent intent = TaskListActivity.newIntent(getActivity(),Integer.parseInt(numberStr));
+                startActivity(intent);
             }
         });
     }
