@@ -14,11 +14,13 @@ import java.util.UUID;
 
 public class TaskListFragment extends Fragment {
 
-    public static TaskListFragment newInstance() {
-        
-        Bundle args = new Bundle();
-        // Todo : put the UUID that has came from the activity
+    public static final String ARG_NUMBER_OF_TASKS = "com.example.taskmanager.controller.fragment.numberOfTasks";
+    public static final String ARG_TITLE = "com.example.taskmanager.controller.fragment.title";
 
+    public static TaskListFragment newInstance(int numberOfTasks, String title) {
+        Bundle args = new Bundle();
+        args.putInt(ARG_NUMBER_OF_TASKS, numberOfTasks);
+        args.putString(ARG_TITLE, title);
         TaskListFragment fragment = new TaskListFragment();
         fragment.setArguments(args);
         return fragment;
