@@ -1,5 +1,6 @@
 package com.example.taskmanager.controller.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,9 +8,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.taskmanager.R;
@@ -42,16 +45,9 @@ public class TaskListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         int numberOfTasks = getArguments().getInt(ARG_NUMBER_OF_TASKS);
         String title = getArguments().getString(ARG_TITLE);
-        initRepository(numberOfTasks, title);
-
-     /*
-        Todo: Configuration change handling
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        if (savedInstanceState == null) {
+            initRepository(numberOfTasks, title);
         }
-     */
-
     }
 
     @Override
@@ -114,11 +110,22 @@ public class TaskListFragment extends Fragment {
             mTaskList = taskList;
         }
 
+        @Override
+        public int getItemViewType(int position) {
+            if (position % 2 == 0)
+                return 0;
+            else
+                return 1;
+        }
+
         @NonNull
         @Override
         public TaskHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             View view = inflater.inflate(R.layout.list_row_task, parent, false);
+            if (viewType == 0) {
+                view.setBackgroundColor(Color.rgb(235, 235, 250));
+            }
             TaskHolder taskHolder = new TaskHolder(view);
             return taskHolder;
         }
