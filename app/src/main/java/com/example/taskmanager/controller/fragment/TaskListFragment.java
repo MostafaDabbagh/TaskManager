@@ -1,10 +1,12 @@
 package com.example.taskmanager.controller.fragment;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -56,9 +58,20 @@ public class TaskListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
         findViews(view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(new TaskAdapter(TaskRepository.getInstance().getAll()));
+        initRecyclerView();
         return view;
+    }
+
+    private void initRecyclerView() {
+        int columns;
+        int orientation = this.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT)
+            columns = 1;
+        else
+            columns = 2;
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), columns);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(new TaskAdapter(TaskRepository.getInstance().getAll()));
     }
 
     private void findViews(View view) {
