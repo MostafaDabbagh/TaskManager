@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -13,17 +14,19 @@ import android.widget.TextView;
 
 import com.example.taskmanager.R;
 import com.example.taskmanager.Repository.TaskRepository;
+import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 public class TaskListFragment extends Fragment {
 
     public static final String ARG_NUMBER_OF_TASKS = "com.example.taskmanager.controller.fragment.numberOfTasks";
     public static final String ARG_TITLE = "com.example.taskmanager.controller.fragment.title";
 
-    private RecyclerView mRecyclerViewTaskList;
+    private RecyclerView mRecyclerView;
 
     public static TaskListFragment newInstance(int numberOfTasks, String title) {
         Bundle args = new Bundle();
@@ -37,7 +40,9 @@ public class TaskListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        int numberOfTasks = getArguments().getInt(ARG_NUMBER_OF_TASKS);
+        String title = getArguments().getString(ARG_TITLE);
+        initRepository(numberOfTasks, title);
 
      /*
         Todo: Configuration change handling
@@ -55,12 +60,33 @@ public class TaskListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
         findViews(view);
-        mRecyclerViewTaskList.setAdapter(new TaskAdapter());
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(new TaskAdapter(TaskRepository.getInstance().getAll()));
         return view;
     }
 
     private void findViews(View view) {
-        mRecyclerViewTaskList = view.findViewById(R.id.recycler_view_task_list);
+        mRecyclerView = view.findViewById(R.id.recycler_view_task_list);
+    }
+
+    private void initRepository(int n, String title) {
+        List<Task> taskList = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            int r = new Random().nextInt(3);
+            State state;
+            switch (r) {
+                case 0:
+                    state = State.TODO;
+                    break;
+                case 1:
+                    state = State.DOING;
+                    break;
+                default:
+                    state = State.DONE;
+            }
+            taskList.add(new Task(state, title));
+        }
+        TaskRepository.getInstance().setAll(taskList);
     }
 
     private class TaskHolder extends RecyclerView.ViewHolder {
@@ -82,7 +108,11 @@ public class TaskListFragment extends Fragment {
 
     private class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
-        List<Task> mTaskList = TaskRepository.getInstance().getAll();
+        List<Task> mTaskList;
+
+        public TaskAdapter(List taskList) {
+            mTaskList = taskList;
+        }
 
         @NonNull
         @Override
@@ -90,7 +120,7 @@ public class TaskListFragment extends Fragment {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             View view = inflater.inflate(R.layout.list_row_task, parent, false);
             TaskHolder taskHolder = new TaskHolder(view);
-            return null;
+            return taskHolder;
         }
 
         @Override
