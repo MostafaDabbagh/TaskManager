@@ -12,7 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.taskmanager.R;
-import com.example.taskmanager.controller.activity.TaskListActivity;
+import com.example.taskmanager.Repository.TaskRepository;
+import com.example.taskmanager.controller.activity.TaskPagerActivity;
+import com.example.taskmanager.enums.State;
+import com.example.taskmanager.model.Task;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class TaskBuilderFragment extends Fragment {
 
@@ -30,14 +37,6 @@ public class TaskBuilderFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    /*
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-     */
-
-
     }
 
     @Override
@@ -60,14 +59,42 @@ public class TaskBuilderFragment extends Fragment {
         mButtonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String numberStr = String.valueOf(mEditTextNumber.getText());
+                int number =Integer.parseInt(String.valueOf(mEditTextNumber.getText()));
                 String titleStr = String.valueOf(mEditTextTitle.getText());
-                Intent intent = TaskListActivity
-                        .newIntent(getActivity(),Integer.parseInt(numberStr), titleStr);
+                initRepository(number, titleStr);
+                Intent intent = TaskPagerActivity.newIntent(getActivity());
                 startActivity(intent);
             }
         });
     }
+
+    private void initRepository(int n, String title) {
+        List<Task> taskList = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            int r = new Random().nextInt(3);
+            State state;
+            switch (r) {
+                case 0:
+                    state = State.TODO;
+                    break;
+                case 1:
+                    state = State.DOING;
+                    break;
+                default:
+                    state = State.DONE;
+            }
+            taskList.add(new Task(state, title + " " + (i + 1)));
+        }
+        TaskRepository.getInstance().setAll(taskList);
+    }
+
+
+
+
+
+
+
+
 
 
 

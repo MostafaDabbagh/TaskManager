@@ -3,7 +3,7 @@ package com.example.taskmanager.Repository;
 import java.util.List;
 import java.util.UUID;
 
-public interface RepositoryInterface<E> {
+public interface IRepository<E> {
     void add(E e);
     void remove(E e);
     E get(UUID id);

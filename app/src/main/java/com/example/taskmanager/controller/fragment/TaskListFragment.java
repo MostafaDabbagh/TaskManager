@@ -7,14 +7,11 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.taskmanager.R;
@@ -33,10 +30,9 @@ public class TaskListFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
 
-    public static TaskListFragment newInstance(int numberOfTasks, String title) {
+    public static TaskListFragment newInstance() {
         Bundle args = new Bundle();
-        args.putInt(ARG_NUMBER_OF_TASKS, numberOfTasks);
-        args.putString(ARG_TITLE, title);
+
         TaskListFragment fragment = new TaskListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -45,11 +41,6 @@ public class TaskListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int numberOfTasks = getArguments().getInt(ARG_NUMBER_OF_TASKS);
-        String title = getArguments().getString(ARG_TITLE);
-        if (savedInstanceState == null) {
-            initRepository(numberOfTasks, title);
-        }
     }
 
     @Override
@@ -78,25 +69,6 @@ public class TaskListFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.recycler_view_task_list);
     }
 
-    private void initRepository(int n, String title) {
-        List<Task> taskList = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            int r = new Random().nextInt(3);
-            State state;
-            switch (r) {
-                case 0:
-                    state = State.TODO;
-                    break;
-                case 1:
-                    state = State.DOING;
-                    break;
-                default:
-                    state = State.DONE;
-            }
-            taskList.add(new Task(state, title));
-        }
-        TaskRepository.getInstance().setAll(taskList);
-    }
 
     private class TaskHolder extends RecyclerView.ViewHolder {
 
