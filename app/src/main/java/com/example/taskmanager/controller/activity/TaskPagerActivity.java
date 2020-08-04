@@ -16,6 +16,7 @@ import com.example.taskmanager.R;
 import com.example.taskmanager.Repository.IRepository;
 import com.example.taskmanager.Repository.TaskRepository;
 import com.example.taskmanager.controller.fragment.TaskListFragment;
+import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class TaskPagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_pager);
         findViews();
+
        /*
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.fargment_container);
@@ -50,17 +52,15 @@ public class TaskPagerActivity extends AppCompatActivity {
                     .commit();
         }
         */
-       FragmentStateAdapter adapter = new TaskPagerAdapter(this, mRepository.getAll());
-       mViewPager2.setAdapter(adapter);
+        FragmentStateAdapter adapter = new TaskPagerAdapter(this, mRepository.getAll());
+        mViewPager2.setAdapter(adapter);
     }
 
     private void findViews() {
         mViewPager2 = findViewById(R.id.task_view_pager);
     }
 
-    protected Fragment createFragment() {
-        return TaskListFragment.newInstance();
-    }
+
 
     private class TaskPagerAdapter extends FragmentStateAdapter {
         List<Task> mTaskList;
@@ -73,7 +73,23 @@ public class TaskPagerActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            return TaskListFragment.newInstance();
+            TaskListFragment fragment;
+            switch (position) {
+                case 0:
+                    fragment = TaskListFragment.newInstance(State.TODO);
+                    break;
+                case 1:
+                    fragment = TaskListFragment.newInstance(State.DOING);
+                    break;
+                case 2:
+                    fragment = TaskListFragment.newInstance(State.DONE);
+                    break;
+                default:
+                    fragment = null;
+                    break;
+            }
+
+            return fragment;
         }
 
         @Override
@@ -81,16 +97,6 @@ public class TaskPagerActivity extends AppCompatActivity {
             return 3;
         }
     }
-
-
-
-
-
-
-
-
-
-
 
 
 }

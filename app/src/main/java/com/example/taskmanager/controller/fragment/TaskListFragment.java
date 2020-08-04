@@ -25,14 +25,16 @@ import java.util.Random;
 
 public class TaskListFragment extends Fragment {
 
-    public static final String ARG_NUMBER_OF_TASKS = "com.example.taskmanager.controller.fragment.numberOfTasks";
-    public static final String ARG_TITLE = "com.example.taskmanager.controller.fragment.title";
+    public static final String ARG_STATE = "com.example.taskmanager.controller.fragment.state";
 
     private RecyclerView mRecyclerView;
 
-    public static TaskListFragment newInstance() {
-        Bundle args = new Bundle();
+    private State mFragmentTasksState;
+    private List mFragmentTasks;
 
+    public static TaskListFragment newInstance(State state) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_STATE, state);
         TaskListFragment fragment = new TaskListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -41,6 +43,8 @@ public class TaskListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFragmentTasksState = (State) getArguments().getSerializable(ARG_STATE);
+        setFragmentTaskList();
     }
 
     @Override
@@ -53,6 +57,16 @@ public class TaskListFragment extends Fragment {
         return view;
     }
 
+    private void setFragmentTaskList() {
+        List<Task> allTasks = TaskRepository.getInstance().getAll();
+        List<Task> fragmentTasks = new ArrayList();
+        for (int i = 0; i < allTasks.size(); i++) {
+            if (allTasks.get(i).getState() == mFragmentTasksState)
+                fragmentTasks.add(allTasks.get(i));
+        }
+        mFragmentTasks = fragmentTasks;
+    }
+
     private void initRecyclerView() {
         int columns;
         int orientation = this.getResources().getConfiguration().orientation;
@@ -62,7 +76,7 @@ public class TaskListFragment extends Fragment {
             columns = 2;
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), columns);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(new TaskAdapter(TaskRepository.getInstance().getAll()));
+        mRecyclerView.setAdapter(new TaskAdapter(mFragmentTasks));
     }
 
     private void findViews(View view) {

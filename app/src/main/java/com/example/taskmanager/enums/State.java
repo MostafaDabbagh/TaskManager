@@ -1,5 +1,7 @@
 package com.example.taskmanager.enums;
 
-public enum State {
+import java.io.Serializable;
+
+public enum State implements Serializable {
     TODO, DOING, DONE
 }
