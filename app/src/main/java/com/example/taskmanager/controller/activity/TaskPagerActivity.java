@@ -18,6 +18,8 @@ import com.example.taskmanager.Repository.TaskRepository;
 import com.example.taskmanager.controller.fragment.TaskListFragment;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class TaskPagerActivity extends AppCompatActivity {
     IRepository mRepository = TaskRepository.getInstance();
 
     ViewPager2 mViewPager2;
+    TabLayout mTabLayout;
 
     public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, TaskPagerActivity.class);
@@ -42,24 +45,26 @@ public class TaskPagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task_pager);
         findViews();
 
-       /*
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentById(R.id.fargment_container);
-        if (fragment == null) {
-            fragmentManager
-                    .beginTransaction()
-                    .add(R.id.fargment_container, createFragment())
-                    .commit();
-        }
-        */
         FragmentStateAdapter adapter = new TaskPagerAdapter(this, mRepository.getAll());
         mViewPager2.setAdapter(adapter);
+        new TabLayoutMediator(mTabLayout, mViewPager2,
+                new TabLayoutMediator.TabConfigurationStrategy() {
+                    @Override
+                    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                        if (position == 0)
+                            tab.setText("Todo");
+                        else if (position == 1)
+                            tab.setText("Doing");
+                        else
+                            tab.setText("Done");
+                    }
+                }).attach();
     }
 
     private void findViews() {
         mViewPager2 = findViewById(R.id.task_view_pager);
+        mTabLayout = findViewById(R.id.tab_layout_task);
     }
-
 
 
     private class TaskPagerAdapter extends FragmentStateAdapter {
