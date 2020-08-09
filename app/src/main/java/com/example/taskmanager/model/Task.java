@@ -2,6 +2,7 @@ package com.example.taskmanager.model;
 
 import com.example.taskmanager.enums.State;
 
+import java.util.Random;
 import java.util.UUID;
 
 public class Task {
@@ -37,5 +38,15 @@ public class Task {
 
     public void setId(UUID id) {
         mId = id;
+    }
+
+    public static State randomState() {
+        int r = new Random().nextInt(3);
+        if (r == 0)
+            return State.TODO;
+        else if (r == 1)
+            return State.DOING;
+        else
+            return State.DONE;
     }
 }

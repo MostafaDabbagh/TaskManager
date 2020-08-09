@@ -11,6 +11,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.taskmanager.R;
 import com.example.taskmanager.Repository.IRepository;
@@ -18,23 +19,29 @@ import com.example.taskmanager.Repository.TaskRepository;
 import com.example.taskmanager.controller.fragment.TaskListFragment;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static android.media.CamcorderProfile.get;
 
 public class TaskPagerActivity extends AppCompatActivity {
 
     public static final String EXTRA_NUMBER_OF_TASKS = "numberOfTasks";
     public static final String EXTRA_TITLE = "title";
 
-    IRepository mRepository = TaskRepository.getInstance();
+    IRepository<Task> mRepository = TaskRepository.getInstance();
 
     ViewPager2 mViewPager2;
     TabLayout mTabLayout;
+    FloatingActionButton mFloatingActionButton;
 
-    public static Intent newIntent(Context context) {
+    public static Intent newIntent(Context context, String title) {
         Intent intent = new Intent(context, TaskPagerActivity.class);
+        intent.putExtra(EXTRA_TITLE, title);
         return intent;
     }
 
@@ -44,6 +51,7 @@ public class TaskPagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_pager);
         findViews();
+        setListeners();
 
         FragmentStateAdapter adapter = new TaskPagerAdapter(this, mRepository.getAll());
         mViewPager2.setAdapter(adapter);
@@ -64,6 +72,16 @@ public class TaskPagerActivity extends AppCompatActivity {
     private void findViews() {
         mViewPager2 = findViewById(R.id.task_view_pager);
         mTabLayout = findViewById(R.id.tab_layout_task);
+        mFloatingActionButton = findViewById(R.id.floating_action_button);
+    }
+
+    private void setListeners() {
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
 
@@ -78,22 +96,13 @@ public class TaskPagerActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            TaskListFragment fragment;
-            switch (position) {
-                case 0:
-                    fragment = TaskListFragment.newInstance(State.TODO);
-                    break;
-                case 1:
-                    fragment = TaskListFragment.newInstance(State.DOING);
-                    break;
-                case 2:
-                    fragment = TaskListFragment.newInstance(State.DONE);
-                    break;
-                default:
-                    fragment = null;
-                    break;
-            }
-
+            Fragment fragment;
+            if (position == 0)
+                fragment = TaskListFragment.newInstance(State.TODO);
+            else if (position == 1)
+                fragment = TaskListFragment.newInstance(State.DOING);
+            else
+                fragment = TaskListFragment.newInstance(State.DONE);
             return fragment;
         }
 
@@ -102,6 +111,5 @@ public class TaskPagerActivity extends AppCompatActivity {
             return 3;
         }
     }
-
 
 }
