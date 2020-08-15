@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.taskmanager.R;
 import com.example.taskmanager.Repository.TaskRepository;
@@ -21,7 +22,6 @@ import com.example.taskmanager.model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class TaskListFragment extends Fragment {
 
@@ -29,6 +29,7 @@ public class TaskListFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
 
+    private TaskAdapter mTaskAdapter;
     private State mFragmentTasksState;
     private List mFragmentTasks;
 
@@ -47,6 +48,10 @@ public class TaskListFragment extends Fragment {
         setFragmentTaskList();
     }
 
+    public void showToast() {
+        Toast.makeText(getActivity(), "In fragment" + mFragmentTasksState, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,7 +62,7 @@ public class TaskListFragment extends Fragment {
         return view;
     }
 
-    private void setFragmentTaskList() {
+    public void setFragmentTaskList() {
         List<Task> allTasks = TaskRepository.getInstance().getAll();
         List<Task> fragmentTasks = new ArrayList();
         for (int i = 0; i < allTasks.size(); i++) {
@@ -67,7 +72,7 @@ public class TaskListFragment extends Fragment {
         mFragmentTasks = fragmentTasks;
     }
 
-    private void initRecyclerView() {
+    public void initRecyclerView() {
         int columns;
         int orientation = this.getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_PORTRAIT)
@@ -76,7 +81,14 @@ public class TaskListFragment extends Fragment {
             columns = 2;
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), columns);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(new TaskAdapter(mFragmentTasks));
+        mTaskAdapter = new TaskAdapter(mFragmentTasks);
+        mRecyclerView.setAdapter(mTaskAdapter);
+    }
+
+    public void update() {
+        setFragmentTaskList();
+        mTaskAdapter.setTaskList(mFragmentTasks);
+        mTaskAdapter.notifyDataSetChanged();
     }
 
     private void findViews(View view) {
@@ -87,17 +99,22 @@ public class TaskListFragment extends Fragment {
     private class TaskHolder extends RecyclerView.ViewHolder {
 
         private TextView mTextViewTitle;
-        private TextView mTextViewState;
+        private TextView mTextViewDate;
+        private TextView mTextViewTime;
 
         public TaskHolder(@NonNull View itemView) {
             super(itemView);
             mTextViewTitle = itemView.findViewById(R.id.list_row_text_view_title);
-            mTextViewState = itemView.findViewById(R.id.list_row_text_view_state);
+            mTextViewDate = itemView.findViewById(R.id.list_row_text_view_date);
+            mTextViewTime = itemView.findViewById(R.id.list_row_text_time);
         }
 
         public void bindTask(Task task) {
             mTextViewTitle.setText(task.getTitle());
-            mTextViewState.setText(String.valueOf(task.getState()));
+            String dateStr = task.getDate().toString().substring(0, 11) + task.getDate().toString().substring(30);
+            String timeStr = task.getDate().toString().substring(11, 30);
+            mTextViewDate.setText(dateStr);
+            mTextViewTime.setText(timeStr);
         }
     }
 
@@ -106,6 +123,10 @@ public class TaskListFragment extends Fragment {
         List<Task> mTaskList;
 
         public TaskAdapter(List taskList) {
+            mTaskList = taskList;
+        }
+
+        public void setTaskList(List taskList) {
             mTaskList = taskList;
         }
 

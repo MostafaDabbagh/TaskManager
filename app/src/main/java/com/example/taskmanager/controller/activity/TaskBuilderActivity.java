@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import com.example.taskmanager.R;
 import com.example.taskmanager.controller.fragment.TaskBuilderFragment;
-
 public class TaskBuilderActivity extends SingleFragmentActivity {
 
     @Override

@@ -34,6 +34,7 @@ public class TaskPagerActivity extends AppCompatActivity {
     public static final String EXTRA_TITLE = "title";
 
     IRepository<Task> mRepository = TaskRepository.getInstance();
+    List<TaskListFragment> mFragmentList;
 
     ViewPager2 mViewPager2;
     TabLayout mTabLayout;
@@ -52,6 +53,10 @@ public class TaskPagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task_pager);
         findViews();
         setListeners();
+        mFragmentList = new ArrayList<>();
+        mFragmentList.add(TaskListFragment.newInstance(State.TODO));
+        mFragmentList.add(TaskListFragment.newInstance(State.DOING));
+        mFragmentList.add(TaskListFragment.newInstance(State.DONE));
 
         FragmentStateAdapter adapter = new TaskPagerAdapter(this, mRepository.getAll());
         mViewPager2.setAdapter(adapter);
@@ -79,7 +84,15 @@ public class TaskPagerActivity extends AppCompatActivity {
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Task task = new Task(Task.randomState(), "new task");
+                mRepository.add(task);
+                if (task.getState() == State.TODO) {
+                    mFragmentList.get(0).update();
+                } else if (task.getState() == State.DOING) {
+                    mFragmentList.get(1).update();
+                } else if (task.getState() == State.DONE) {
+                    mFragmentList.get(2).update();
+                }
             }
         });
     }
@@ -96,14 +109,15 @@ public class TaskPagerActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            Fragment fragment;
+           /* Fragment fragment;
             if (position == 0)
                 fragment = TaskListFragment.newInstance(State.TODO);
             else if (position == 1)
                 fragment = TaskListFragment.newInstance(State.DOING);
             else
                 fragment = TaskListFragment.newInstance(State.DONE);
-            return fragment;
+            return fragment; */
+            return mFragmentList.get(position);
         }
 
         @Override
