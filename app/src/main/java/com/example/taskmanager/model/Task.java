@@ -3,16 +3,18 @@ package com.example.taskmanager.model;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.utils.DateUtils;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Random;
 import java.util.Timer;
 import java.util.UUID;
 
-public class Task {
+public class Task implements Serializable {
     private State mState;
     private String mTitle;
     private UUID mId;
     private Date mDate;
+    private String mDescrption;
 
     public Task(State state, String title, Date date) {
         mState = state;
@@ -26,6 +28,14 @@ public class Task {
         mTitle = title;
         mDate = DateUtils.getRandomDate();
         mId = UUID.randomUUID();
+    }
+
+    public String getDescrption() {
+        return mDescrption;
+    }
+
+    public void setDescrption(String descrption) {
+        mDescrption = descrption;
     }
 
     public Date getDate() {

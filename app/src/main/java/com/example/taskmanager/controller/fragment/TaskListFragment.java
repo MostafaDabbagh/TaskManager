@@ -5,7 +5,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -107,14 +109,34 @@ public class TaskListFragment extends Fragment {
             mTextViewTitle = itemView.findViewById(R.id.list_row_text_view_title);
             mTextViewDate = itemView.findViewById(R.id.list_row_text_view_date);
             mTextViewTime = itemView.findViewById(R.id.list_row_text_time);
+
         }
 
-        public void bindTask(Task task) {
+        public void bindTask(final Task task) {
             mTextViewTitle.setText(task.getTitle());
             String dateStr = task.getDate().toString().substring(0, 11) + task.getDate().toString().substring(30);
             String timeStr = task.getDate().toString().substring(11, 30);
             mTextViewDate.setText(dateStr);
             mTextViewTime.setText(timeStr);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // open task setter dialog
+                    TaskSetterDialogFragment taskSetterDialogFragment = TaskSetterDialogFragment.newInstance(task);
+                    taskSetterDialogFragment.show(getFragmentManager(), "taskSetterDialog");
+
+                /*    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    Fragment prev = getFragmentManager().findFragmentByTag("taskSetterDialog");
+                    if (prev != null) {
+                        ft.remove(prev);
+                    }
+                    ft.addToBackStack(null);
+
+                    DialogFragment taskSetterDialoFragment = TaskSetterDialogFragment.newInstance(task);
+                    taskSetterDialoFragment.show(ft, "taskSetterDialog");   */
+                }
+            });
         }
     }
 
@@ -143,6 +165,7 @@ public class TaskListFragment extends Fragment {
         public TaskHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             View view = inflater.inflate(R.layout.list_row_task, parent, false);
+
             if (viewType == 0) {
                 view.setBackgroundColor(Color.rgb(235, 235, 250));
             }
