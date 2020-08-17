@@ -106,11 +106,13 @@ public class TaskListFragment extends Fragment {
             return;
         if (requestCode == REQUEST_CODE_TASK_SETTER_DIALOG_FRAGMENT) {
             Task responseTask = (Task) data.getSerializableExtra(TaskSetterDialogFragment.EXTRA_CURRENT_TASK);
+
             TaskRepository taskRepository = TaskRepository.getInstance();
             if (taskRepository.get(responseTask.getId()) == null)
                 taskRepository.add(responseTask);
             else
                 taskRepository.update(responseTask);
+
             //   Toast.makeText(getActivity(), responseTask.getTitle(), Toast.LENGTH_SHORT).show();
             //    TaskPagerActivity.updateAllPages();
             update();

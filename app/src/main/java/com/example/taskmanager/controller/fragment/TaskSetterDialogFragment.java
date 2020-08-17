@@ -18,13 +18,18 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 
 import com.example.taskmanager.R;
+import com.example.taskmanager.controller.activity.TaskPagerActivity;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class TaskSetterDialogFragment extends DialogFragment {
 
     public static final String ARG_CURRENT_TASK = "currentTask";
     public static final String EXTRA_CURRENT_TASK = "com.example.taskmanager.controller.fragment.currentTask";
+    public static final int REQUEST_CODE_DATE_PICKER = 0;
 
     private Task mCurrentTask;
 
@@ -93,20 +98,25 @@ public class TaskSetterDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        setCurrentTask();
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_CURRENT_TASK, mCurrentTask);
-        TaskListFragment fragment = (TaskListFragment) getTargetFragment();
-        fragment.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode != Activity.RESULT_OK)
+            return;
+        if (requestCode == REQUEST_CODE_DATE_PICKER) {
+            Date responseDate = (Date) data.getSerializableExtra(DatePickerDialogFragment.EXTRA_DATE_PICKED);
+            GregorianCalendar newTimeGC = new GregorianCalendar();
+            newTimeGC.setTime(responseDate);
+            mCurrentTask.setDate(newTimeGC.getTime());
+            String dateStr = mCurrentTask.getDate().toString().substring(0, 11) + mCurrentTask.getDate().toString().substring(30);
+            mButtonDate.setText(dateStr);
+
+        }
+
     }
 
     private void setCurrentTask() {
         mCurrentTask.setTitle(mEditTextTitle.getText().toString());
         mCurrentTask.setDescrptionn(mEditTextDescription.toString());
-        // TODO
-        //  mCurrentTask.setDate();
+        // date is set in onActivityResult
         // State is already set in RadioGroup check listener
 
 
@@ -140,8 +150,11 @@ public class TaskSetterDialogFragment extends DialogFragment {
         mButtonDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
+//////////////////////////////////////////////////////////////////////////
+                DatePickerDialogFragment datePickerDialogFragment = DatePickerDialogFragment.newInstance(mCurrentTask.getDate());
+                datePickerDialogFragment.setTargetFragment(TaskSetterDialogFragment.this, REQUEST_CODE_DATE_PICKER);
+                datePickerDialogFragment.show(getFragmentManager(), "datePickerDialog");
+//////////////////////////////////////////////////////////////////////////
             }
         });
 
