@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -12,11 +11,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.taskmanager.R;
+import com.example.taskmanager.Repository.FragmentRepository;
 import com.example.taskmanager.Repository.IRepository;
 import com.example.taskmanager.Repository.TaskRepository;
 import com.example.taskmanager.controller.fragment.TaskListFragment;
+import com.example.taskmanager.controller.fragment.TaskSetterDialogFragment;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,12 +35,13 @@ public class TaskPagerActivity extends AppCompatActivity {
     public static final String EXTRA_NUMBER_OF_TASKS = "numberOfTasks";
     public static final String EXTRA_TITLE = "title";
 
-    IRepository<Task> mRepository = TaskRepository.getInstance();
-    List<TaskListFragment> mFragmentList;
+    public static List<TaskListFragment> sFragmentList;
 
-    ViewPager2 mViewPager2;
-    TabLayout mTabLayout;
-    FloatingActionButton mFloatingActionButton;
+    private IRepository<Task> mRepository = TaskRepository.getInstance();
+
+    private ViewPager2 mViewPager2;
+    private TabLayout mTabLayout;
+    private FloatingActionButton mFloatingActionButton;
 
     public static Intent newIntent(Context context, String title) {
         Intent intent = new Intent(context, TaskPagerActivity.class);
@@ -53,10 +56,11 @@ public class TaskPagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task_pager);
         findViews();
         setListeners();
-        mFragmentList = new ArrayList<>();
-        mFragmentList.add(TaskListFragment.newInstance(State.TODO));
-        mFragmentList.add(TaskListFragment.newInstance(State.DOING));
-        mFragmentList.add(TaskListFragment.newInstance(State.DONE));
+        sFragmentList = new ArrayList<>();
+        sFragmentList.add(TaskListFragment.newInstance(State.TODO));
+        sFragmentList.add(TaskListFragment.newInstance(State.DOING));
+        sFragmentList.add(TaskListFragment.newInstance(State.DONE));
+        FragmentRepository.getInstance().setAll(sFragmentList);
 
         FragmentStateAdapter adapter = new TaskPagerAdapter(this, mRepository.getAll());
         mViewPager2.setAdapter(adapter);
@@ -81,20 +85,26 @@ public class TaskPagerActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
-        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+        mFloatingActionButton.setOnClickListener(
+                new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Task task = new Task(Task.randomState(), "new task");
-                mRepository.add(task);
-                if (task.getState() == State.TODO) {
-                    mFragmentList.get(0).update();
-                } else if (task.getState() == State.DOING) {
-                    mFragmentList.get(1).update();
-                } else if (task.getState() == State.DONE) {
-                    mFragmentList.get(2).update();
-                }
+                sFragmentList.get(mViewPager2.getCurrentItem()).startTaskSetterDialog(task);
+
+
+                //
+//                mRepository.add(task);
+//                if (task.getState() == State.TODO) {
+//                    sFragmentList.get(0).update();
+//                } else if (task.getState() == State.DOING) {
+//                    sFragmentList.get(1).update();
+//                } else if (task.getState() == State.DONE) {
+//                    sFragmentList.get(2).update();
+//                }
             }
         });
+
     }
 
 
@@ -117,7 +127,7 @@ public class TaskPagerActivity extends AppCompatActivity {
             else
                 fragment = TaskListFragment.newInstance(State.DONE);
             return fragment; */
-            return mFragmentList.get(position);
+            return sFragmentList.get(position);
         }
 
         @Override

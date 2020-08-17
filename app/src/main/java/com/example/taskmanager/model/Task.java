@@ -6,7 +6,6 @@ import com.example.taskmanager.utils.DateUtils;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Random;
-import java.util.Timer;
 import java.util.UUID;
 
 public class Task implements Serializable {
@@ -14,7 +13,7 @@ public class Task implements Serializable {
     private String mTitle;
     private UUID mId;
     private Date mDate;
-    private String mDescrption;
+    private String mDescrptionn;
 
     public Task(State state, String title, Date date) {
         mState = state;
@@ -30,12 +29,12 @@ public class Task implements Serializable {
         mId = UUID.randomUUID();
     }
 
-    public String getDescrption() {
-        return mDescrption;
+    public String getDescrptionn() {
+        return mDescrptionn;
     }
 
-    public void setDescrption(String descrption) {
-        mDescrption = descrption;
+    public void setDescrptionn(String descrptionn) {
+        mDescrptionn = descrptionn;
     }
 
     public Date getDate() {

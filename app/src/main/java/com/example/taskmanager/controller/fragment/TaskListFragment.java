@@ -1,13 +1,14 @@
 package com.example.taskmanager.controller.fragment;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,7 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.taskmanager.R;
+import com.example.taskmanager.Repository.FragmentRepository;
+import com.example.taskmanager.Repository.IRepository;
 import com.example.taskmanager.Repository.TaskRepository;
+import com.example.taskmanager.controller.activity.TaskPagerActivity;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
 
@@ -28,6 +32,7 @@ import java.util.List;
 public class TaskListFragment extends Fragment {
 
     public static final String ARG_STATE = "com.example.taskmanager.controller.fragment.state";
+    public static final int REQUEST_CODE_TASK_SETTER_DIALOG_FRAGMENT = 0;
 
     private RecyclerView mRecyclerView;
 
@@ -47,11 +52,7 @@ public class TaskListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFragmentTasksState = (State) getArguments().getSerializable(ARG_STATE);
-        setFragmentTaskList();
-    }
-
-    public void showToast() {
-        Toast.makeText(getActivity(), "In fragment" + mFragmentTasksState, Toast.LENGTH_SHORT).show();
+        updateFragmentTaskList();
     }
 
     @Override
@@ -64,7 +65,7 @@ public class TaskListFragment extends Fragment {
         return view;
     }
 
-    public void setFragmentTaskList() {
+    public void updateFragmentTaskList() {
         List<Task> allTasks = TaskRepository.getInstance().getAll();
         List<Task> fragmentTasks = new ArrayList();
         for (int i = 0; i < allTasks.size(); i++) {
@@ -88,7 +89,8 @@ public class TaskListFragment extends Fragment {
     }
 
     public void update() {
-        setFragmentTaskList();
+        updateFragmentTaskList();
+
         mTaskAdapter.setTaskList(mFragmentTasks);
         mTaskAdapter.notifyDataSetChanged();
     }
@@ -97,6 +99,49 @@ public class TaskListFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.recycler_view_task_list);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK)
+            return;
+        if (requestCode == REQUEST_CODE_TASK_SETTER_DIALOG_FRAGMENT) {
+            Task responseTask = (Task) data.getSerializableExtra(TaskSetterDialogFragment.EXTRA_CURRENT_TASK);
+            TaskRepository taskRepository = TaskRepository.getInstance();
+            if (taskRepository.get(responseTask.getId()) == null)
+                taskRepository.add(responseTask);
+            else
+                taskRepository.update(responseTask);
+            //   Toast.makeText(getActivity(), responseTask.getTitle(), Toast.LENGTH_SHORT).show();
+            //    TaskPagerActivity.updateAllPages();
+            update();
+
+    /*        if (responseTask.getState() == State.TODO) {
+                TaskListFragment tsf = (TaskListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("f0");
+                tsf.update();
+            }
+            else if (responseTask.getState() == State.DOING) {
+                TaskListFragment tsf = (TaskListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("f1");
+                tsf.update();
+            }
+//                TaskPagerActivity.sFragmentList.get(1).update();
+            else {
+                TaskListFragment tsf = (TaskListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("f2");
+                tsf.update();
+            }
+*/
+//                TaskPagerActivity.sFragmentList.get(2).update();
+
+
+            //   FragmentRepository.getInstance().get(1).update();
+            //  FragmentRepository.getInstance().get(2).update();
+        }
+    }
+
+    public void startTaskSetterDialog(Task task) {
+        TaskSetterDialogFragment taskSetterDialogFragment = TaskSetterDialogFragment.newInstance(task);
+        taskSetterDialogFragment.setTargetFragment(TaskListFragment.this, REQUEST_CODE_TASK_SETTER_DIALOG_FRAGMENT);
+        taskSetterDialogFragment.show(getFragmentManager(), "taskSetterDialog");
+    }
 
     private class TaskHolder extends RecyclerView.ViewHolder {
 
@@ -123,9 +168,7 @@ public class TaskListFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     // open task setter dialog
-                    TaskSetterDialogFragment taskSetterDialogFragment = TaskSetterDialogFragment.newInstance(task);
-                    taskSetterDialogFragment.show(getFragmentManager(), "taskSetterDialog");
-
+                    startTaskSetterDialog(task);
                 /*    FragmentTransaction ft = getFragmentManager().beginTransaction();
                     Fragment prev = getFragmentManager().findFragmentByTag("taskSetterDialog");
                     if (prev != null) {
