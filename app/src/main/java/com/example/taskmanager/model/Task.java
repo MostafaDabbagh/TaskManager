@@ -11,22 +11,25 @@ import java.util.UUID;
 public class Task implements Serializable {
     private State mState;
     private String mTitle;
-    private UUID mId;
+    private UUID mUUID;
     private Date mDate;
     private String mDescrptionn;
+    private final UUID mUserId;
 
-    public Task(State state, String title, Date date) {
+    public Task(State state, String title, Date date, UUID userId) {
         mState = state;
         mTitle = title;
         mDate = date;
-        mId = UUID.randomUUID();
+        mUUID = UUID.randomUUID();
+        mUserId = userId;
     }
 
-    public Task(State state, String title) {
+    public Task(State state, String title, User currentUser) {
         mState = state;
         mTitle = title;
         mDate = DateUtils.getRandomDate();
-        mId = UUID.randomUUID();
+        mUUID = UUID.randomUUID();
+        mUserId = currentUser.getUUID();
     }
 
     public String getDescrptionn() {
@@ -61,12 +64,16 @@ public class Task implements Serializable {
         mTitle = title;
     }
 
-    public UUID getId() {
-        return mId;
+    public UUID getUUID() {
+        return mUUID;
     }
 
-    public void setId(UUID id) {
-        mId = id;
+    public void setUUID(UUID UUID) {
+        mUUID = UUID;
+    }
+
+    public UUID getUserId() {
+        return mUserId;
     }
 
     public static State randomState() {

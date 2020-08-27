@@ -17,6 +17,7 @@ import com.example.taskmanager.R;
 import com.example.taskmanager.Repository.FragmentRepository;
 import com.example.taskmanager.Repository.IRepository;
 import com.example.taskmanager.Repository.TaskRepository;
+import com.example.taskmanager.Repository.UserRepository;
 import com.example.taskmanager.controller.fragment.TaskListFragment;
 import com.example.taskmanager.controller.fragment.TaskSetterDialogFragment;
 import com.example.taskmanager.enums.State;
@@ -28,8 +29,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.media.CamcorderProfile.get;
-
 public class TaskPagerActivity extends AppCompatActivity {
 
     public static final String EXTRA_NUMBER_OF_TASKS = "numberOfTasks";
@@ -37,18 +36,17 @@ public class TaskPagerActivity extends AppCompatActivity {
 
     public static List<TaskListFragment> sFragmentList;
 
-    private IRepository<Task> mRepository = TaskRepository.getInstance();
+    private TaskRepository mTaskRepository = TaskRepository.getInstance();
+    private UserRepository mUserRepository = UserRepository.getInstance();
 
     private ViewPager2 mViewPager2;
     private TabLayout mTabLayout;
     private FloatingActionButton mFloatingActionButton;
 
-    public static Intent newIntent(Context context, String title) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, TaskPagerActivity.class);
-        intent.putExtra(EXTRA_TITLE, title);
         return intent;
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +60,7 @@ public class TaskPagerActivity extends AppCompatActivity {
         sFragmentList.add(TaskListFragment.newInstance(State.DONE));
         FragmentRepository.getInstance().setAll(sFragmentList);
 
-        FragmentStateAdapter adapter = new TaskPagerAdapter(this, mRepository.getAll());
+        FragmentStateAdapter adapter = new TaskPagerAdapter(this, mTaskRepository.getUserTasks(UserRepository.getInstance().getCurrentUser()));
         mViewPager2.setAdapter(adapter);
         new TabLayoutMediator(mTabLayout, mViewPager2,
                 new TabLayoutMediator.TabConfigurationStrategy() {
@@ -89,24 +87,11 @@ public class TaskPagerActivity extends AppCompatActivity {
                 new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Task task = new Task(Task.randomState(), "new task");
+                Task task = new Task(State.TODO, "new task", mUserRepository.getCurrentUser());
                 sFragmentList.get(mViewPager2.getCurrentItem()).startTaskSetterDialog(task);
-
-
-                //
-//                mRepository.add(task);
-//                if (task.getState() == State.TODO) {
-//                    sFragmentList.get(0).update();
-//                } else if (task.getState() == State.DOING) {
-//                    sFragmentList.get(1).update();
-//                } else if (task.getState() == State.DONE) {
-//                    sFragmentList.get(2).update();
-//                }
             }
         });
-
     }
-
 
     private class TaskPagerAdapter extends FragmentStateAdapter {
         List<Task> mTaskList;

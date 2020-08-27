@@ -21,6 +21,7 @@ import com.example.taskmanager.R;
 import com.example.taskmanager.controller.activity.TaskPagerActivity;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
+import com.example.taskmanager.utils.DateUtils;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -30,6 +31,7 @@ public class TaskSetterDialogFragment extends DialogFragment {
     public static final String ARG_CURRENT_TASK = "currentTask";
     public static final String EXTRA_CURRENT_TASK = "com.example.taskmanager.controller.fragment.currentTask";
     public static final int REQUEST_CODE_DATE_PICKER = 0;
+    public static final int REQUEST_CODE_TIME_PICKER = 1;
 
     private Task mCurrentTask;
 
@@ -51,21 +53,8 @@ public class TaskSetterDialogFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCurrentTask = (Task) getArguments().getSerializable(ARG_CURRENT_TASK);
-
     }
 
-    /*
-        @Nullable
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater,
-                                 @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.dialog_fragment_task_setter, null);
-            findViews(view);
-            setListeners();
-            initViews();
-            return view;
-        }
-    */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -106,9 +95,14 @@ public class TaskSetterDialogFragment extends DialogFragment {
             GregorianCalendar newTimeGC = new GregorianCalendar();
             newTimeGC.setTime(responseDate);
             mCurrentTask.setDate(newTimeGC.getTime());
-            String dateStr = mCurrentTask.getDate().toString().substring(0, 11) + mCurrentTask.getDate().toString().substring(30);
-            mButtonDate.setText(dateStr);
-
+            mButtonDate.setText(DateUtils.getDateText(mCurrentTask.getDate()));
+        }
+        else if (requestCode == REQUEST_CODE_TIME_PICKER) {
+            Date responseDate = (Date) data.getSerializableExtra(TimePickerDialogFragment.EXTRA_TIME_PICKED);
+            GregorianCalendar newTimeGC = new GregorianCalendar();
+            newTimeGC.setTime(responseDate);
+            mCurrentTask.setDate(newTimeGC.getTime());
+            mButtonTime.setText(DateUtils.getTimeText(mCurrentTask.getDate()));
         }
 
     }
@@ -118,8 +112,6 @@ public class TaskSetterDialogFragment extends DialogFragment {
         mCurrentTask.setDescrptionn(mEditTextDescription.toString());
         // date is set in onActivityResult
         // State is already set in RadioGroup check listener
-
-
     }
 
     private void initViews() {
@@ -150,19 +142,18 @@ public class TaskSetterDialogFragment extends DialogFragment {
         mButtonDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//////////////////////////////////////////////////////////////////////////
                 DatePickerDialogFragment datePickerDialogFragment = DatePickerDialogFragment.newInstance(mCurrentTask.getDate());
                 datePickerDialogFragment.setTargetFragment(TaskSetterDialogFragment.this, REQUEST_CODE_DATE_PICKER);
                 datePickerDialogFragment.show(getFragmentManager(), "datePickerDialog");
-//////////////////////////////////////////////////////////////////////////
             }
         });
 
         mButtonTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
+                TimePickerDialogFragment timePickerDialogFragment = TimePickerDialogFragment.newInstance(mCurrentTask.getDate());
+                timePickerDialogFragment.setTargetFragment(TaskSetterDialogFragment.this, REQUEST_CODE_TIME_PICKER);
+                timePickerDialogFragment.show(getFragmentManager(), "timePickerDialog");
             }
         });
 

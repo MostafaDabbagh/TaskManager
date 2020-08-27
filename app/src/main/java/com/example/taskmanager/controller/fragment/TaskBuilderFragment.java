@@ -62,7 +62,7 @@ public class TaskBuilderFragment extends Fragment {
                 int number =Integer.parseInt(String.valueOf(mEditTextNumber.getText()));
                 String titleStr = String.valueOf(mEditTextTitle.getText());
                 initRepository(number, titleStr);
-                Intent intent = TaskPagerActivity.newIntent(getActivity(), titleStr);
+                Intent intent = TaskPagerActivity.newIntent(getActivity());
                 startActivity(intent);
             }
         });
@@ -71,7 +71,7 @@ public class TaskBuilderFragment extends Fragment {
     private void initRepository(int n, String title) {
         List<Task> taskList = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            taskList.add(new Task(Task.randomState(), title + " " + (i + 1)));
+       //     taskList.add(new Task(Task.randomState(), title + " " + (i + 1)));
         }
         TaskRepository.getInstance().setAll(taskList);
     }

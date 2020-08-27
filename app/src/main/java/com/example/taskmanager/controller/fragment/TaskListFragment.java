@@ -16,15 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.taskmanager.R;
-import com.example.taskmanager.Repository.FragmentRepository;
-import com.example.taskmanager.Repository.IRepository;
 import com.example.taskmanager.Repository.TaskRepository;
-import com.example.taskmanager.controller.activity.TaskPagerActivity;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
+import com.example.taskmanager.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +60,12 @@ public class TaskListFragment extends Fragment {
         findViews(view);
         initRecyclerView();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        update();
     }
 
     public void updateFragmentTaskList() {
@@ -108,34 +111,12 @@ public class TaskListFragment extends Fragment {
             Task responseTask = (Task) data.getSerializableExtra(TaskSetterDialogFragment.EXTRA_CURRENT_TASK);
 
             TaskRepository taskRepository = TaskRepository.getInstance();
-            if (taskRepository.get(responseTask.getId()) == null)
+            if (taskRepository.get(responseTask.getUUID()) == null)
                 taskRepository.add(responseTask);
             else
                 taskRepository.update(responseTask);
 
-            //   Toast.makeText(getActivity(), responseTask.getTitle(), Toast.LENGTH_SHORT).show();
-            //    TaskPagerActivity.updateAllPages();
             update();
-
-    /*        if (responseTask.getState() == State.TODO) {
-                TaskListFragment tsf = (TaskListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("f0");
-                tsf.update();
-            }
-            else if (responseTask.getState() == State.DOING) {
-                TaskListFragment tsf = (TaskListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("f1");
-                tsf.update();
-            }
-//                TaskPagerActivity.sFragmentList.get(1).update();
-            else {
-                TaskListFragment tsf = (TaskListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("f2");
-                tsf.update();
-            }
-*/
-//                TaskPagerActivity.sFragmentList.get(2).update();
-
-
-            //   FragmentRepository.getInstance().get(1).update();
-            //  FragmentRepository.getInstance().get(2).update();
         }
     }
 
@@ -161,25 +142,16 @@ public class TaskListFragment extends Fragment {
 
         public void bindTask(final Task task) {
             mTextViewTitle.setText(task.getTitle());
-            String dateStr = task.getDate().toString().substring(0, 11) + task.getDate().toString().substring(30);
-            String timeStr = task.getDate().toString().substring(11, 30);
-            mTextViewDate.setText(dateStr);
-            mTextViewTime.setText(timeStr);
+//            String dateStr = task.getDate().toString().substring(0, 11) + task.getDate().toString().substring(30);
+//            String timeStr = task.getDate().toString().substring(11, 30);
+            mTextViewDate.setText(DateUtils.getDateText(task.getDate()));
+            mTextViewTime.setText(DateUtils.getTimeText(task.getDate()));
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     // open task setter dialog
                     startTaskSetterDialog(task);
-                /*    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    Fragment prev = getFragmentManager().findFragmentByTag("taskSetterDialog");
-                    if (prev != null) {
-                        ft.remove(prev);
-                    }
-                    ft.addToBackStack(null);
-
-                    DialogFragment taskSetterDialoFragment = TaskSetterDialogFragment.newInstance(task);
-                    taskSetterDialoFragment.show(ft, "taskSetterDialog");   */
                 }
             });
         }

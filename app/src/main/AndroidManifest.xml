@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".controller.activity.SingleFragmentActivity" />
         <activity android:name=".controller.activity.TaskPagerActivity" />
-        <activity android:name=".controller.activity.TaskBuilderActivity">
+        <activity android:name=".controller.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

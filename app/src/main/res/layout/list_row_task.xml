@@ -39,6 +39,7 @@
             android:layout_weight="1"
             android:textSize="16sp"
             tools:text="Time" />
+
     </LinearLayout>
 
 </LinearLayout>
