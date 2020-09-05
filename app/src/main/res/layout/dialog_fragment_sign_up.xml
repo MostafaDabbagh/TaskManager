@@ -16,8 +16,7 @@
         android:layout_marginRight="32dp"
         android:ems="10"
         android:gravity="center"
-        android:inputType="textPersonName"
-        android:text="Name" />
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/dialog_edit_text_password"

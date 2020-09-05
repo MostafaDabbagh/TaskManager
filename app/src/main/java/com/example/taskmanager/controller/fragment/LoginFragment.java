@@ -23,7 +23,7 @@ import com.example.taskmanager.model.User;
 public class LoginFragment extends Fragment {
 
     public static final int REQUEST_CODE_SIGN_UP_DIALOG = 0;
-    private UserRepository mUserRepository = UserRepository.getInstance();
+    private UserRepository mUserRepository;
 
     private EditText mEditTextUsername;
     private EditText mEditTextPassword;
@@ -40,6 +40,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUserRepository = UserRepository.getInstance(getActivity());
     }
 
     @Override
@@ -70,7 +71,7 @@ public class LoginFragment extends Fragment {
                     if (password.equals(enteredPassword)) {
                         // Start TaskPagerActivity
                         User currentUser = mUserRepository.get(mEditTextUsername.getText().toString());
-                        UserRepository.getInstance().setCurrentUser(currentUser);
+                        UserRepository.getInstance(getActivity()).setCurrentUser(currentUser);
                         Intent intent = TaskPagerActivity.newIntent(getActivity());
                         startActivity(intent);
                     } else
@@ -99,7 +100,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         User user = (User) data.getSerializableExtra(SignUpDialogFragment.EXTRA_CREATED_USER);
-        UserRepository.getInstance().add(user);
+        UserRepository.getInstance(getActivity()).add(user);
         mEditTextUsername.setText(user.getUsername(), TextView.BufferType.EDITABLE);
         mEditTextPassword.setText(user.getPassword(), TextView.BufferType.EDITABLE);
     }

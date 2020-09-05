@@ -18,7 +18,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.taskmanager.R;
+import com.example.taskmanager.Repository.TaskDBRepository;
 import com.example.taskmanager.Repository.TaskRepository;
+import com.example.taskmanager.Repository.UserRepository;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
 import com.example.taskmanager.utils.DateUtils;
@@ -69,11 +71,14 @@ public class TaskListFragment extends Fragment {
     }
 
     public void updateFragmentTaskList() {
-        List<Task> allTasks = TaskRepository.getInstance().getAll();
+
+        List<Task> userTasks = TaskDBRepository
+                .getInstance(getActivity())
+                .getUserTasks(UserRepository.getInstance(getActivity()).getCurrentUser().getUUID());
         List<Task> fragmentTasks = new ArrayList();
-        for (int i = 0; i < allTasks.size(); i++) {
-            if (allTasks.get(i).getState() == mFragmentTasksState)
-                fragmentTasks.add(allTasks.get(i));
+        for (int i = 0; i < userTasks.size(); i++) {
+            if (userTasks.get(i).getState() == mFragmentTasksState)
+                fragmentTasks.add(userTasks.get(i));
         }
         mFragmentTasks = fragmentTasks;
     }
@@ -110,11 +115,11 @@ public class TaskListFragment extends Fragment {
         if (requestCode == REQUEST_CODE_TASK_SETTER_DIALOG_FRAGMENT) {
             Task responseTask = (Task) data.getSerializableExtra(TaskSetterDialogFragment.EXTRA_CURRENT_TASK);
 
-            TaskRepository taskRepository = TaskRepository.getInstance();
-            if (taskRepository.get(responseTask.getUUID()) == null)
-                taskRepository.add(responseTask);
+            TaskDBRepository taskDBRepository = TaskDBRepository.getInstance(getActivity());
+            if (taskDBRepository.get(responseTask.getUUID()) == null)
+                taskDBRepository.add(responseTask);
             else
-                taskRepository.update(responseTask);
+                taskDBRepository.update(responseTask);
 
             update();
         }

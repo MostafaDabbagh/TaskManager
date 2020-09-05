@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class TaskRepository implements IRepository<Task> {
+public class TaskRepository implements IDBRepository<Task> {
     private static TaskRepository sRepository;
 
     public static TaskRepository getInstance(){
@@ -55,7 +55,7 @@ public class TaskRepository implements IRepository<Task> {
         return mTaskList;
     }
 
-    @Override
+
     public void setAll(List<Task> list) {
         mTaskList = list;
     }

@@ -14,6 +14,12 @@ public class User implements Serializable {
         mUUID = UUID.randomUUID();
     }
 
+    public User(String username, String password, UUID UUID) {
+        mUsername = username;
+        mPassword = password;
+        mUUID = UUID;
+    }
+
     public String getUsername() {
         return mUsername;
     }

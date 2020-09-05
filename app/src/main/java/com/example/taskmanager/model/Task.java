@@ -24,12 +24,21 @@ public class Task implements Serializable {
         mUserId = userId;
     }
 
-    public Task(State state, String title, User currentUser) {
+    public Task(State state, String title, UUID userId) {
         mState = state;
         mTitle = title;
         mDate = DateUtils.getRandomDate();
         mUUID = UUID.randomUUID();
-        mUserId = currentUser.getUUID();
+        mUserId = userId;
+    }
+
+    public Task(UUID uuid, State state, String title, Date date, String descrptionn, UUID userId) {
+        mState = state;
+        mTitle = title;
+        mUUID = uuid;
+        mDate = date;
+        mDescrptionn = descrptionn;
+        mUserId = userId;
     }
 
     public String getDescrptionn() {

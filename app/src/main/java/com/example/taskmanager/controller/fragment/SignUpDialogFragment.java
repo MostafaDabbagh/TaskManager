@@ -58,7 +58,7 @@ public class SignUpDialogFragment extends DialogFragment {
                         String usernameStr = mEditTextUsername.getText().toString();
                         String passwordStr = mEditTextPassword.getText().toString();
                         User user = new User(usernameStr, passwordStr);
-                        if (UserRepository.getInstance().userExists(usernameStr))
+                        if (UserRepository.getInstance(getActivity()).userExists(usernameStr))
                             Toast.makeText(getActivity(), "Username is already taken", Toast.LENGTH_SHORT).show();
                         else {
                             intent.putExtra(EXTRA_CREATED_USER, user);

@@ -11,15 +11,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.taskmanager.R;
-import com.example.taskmanager.Repository.FragmentRepository;
-import com.example.taskmanager.Repository.IRepository;
+import com.example.taskmanager.Repository.TaskDBRepository;
 import com.example.taskmanager.Repository.TaskRepository;
 import com.example.taskmanager.Repository.UserRepository;
 import com.example.taskmanager.controller.fragment.TaskListFragment;
-import com.example.taskmanager.controller.fragment.TaskSetterDialogFragment;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -36,8 +33,8 @@ public class TaskPagerActivity extends AppCompatActivity {
 
     public static List<TaskListFragment> sFragmentList;
 
-    private TaskRepository mTaskRepository = TaskRepository.getInstance();
-    private UserRepository mUserRepository = UserRepository.getInstance();
+    private TaskDBRepository mTaskDBRepository;
+    private UserRepository mUserRepository = UserRepository.getInstance(this);
 
     private ViewPager2 mViewPager2;
     private TabLayout mTabLayout;
@@ -54,13 +51,13 @@ public class TaskPagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task_pager);
         findViews();
         setListeners();
+        mTaskDBRepository = TaskDBRepository.getInstance(this);
         sFragmentList = new ArrayList<>();
         sFragmentList.add(TaskListFragment.newInstance(State.TODO));
         sFragmentList.add(TaskListFragment.newInstance(State.DOING));
         sFragmentList.add(TaskListFragment.newInstance(State.DONE));
-        FragmentRepository.getInstance().setAll(sFragmentList);
 
-        FragmentStateAdapter adapter = new TaskPagerAdapter(this, mTaskRepository.getUserTasks(UserRepository.getInstance().getCurrentUser()));
+        FragmentStateAdapter adapter = new TaskPagerAdapter(this);
         mViewPager2.setAdapter(adapter);
         new TabLayoutMediator(mTabLayout, mViewPager2,
                 new TabLayoutMediator.TabConfigurationStrategy() {
@@ -85,20 +82,20 @@ public class TaskPagerActivity extends AppCompatActivity {
     private void setListeners() {
         mFloatingActionButton.setOnClickListener(
                 new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Task task = new Task(State.TODO, "new task", mUserRepository.getCurrentUser());
-                sFragmentList.get(mViewPager2.getCurrentItem()).startTaskSetterDialog(task);
-            }
-        });
+                    @Override
+                    public void onClick(View view) {
+                        Task task = new Task(State.TODO, "new task", mUserRepository.getCurrentUser().getUUID());
+                        sFragmentList.get(mViewPager2.getCurrentItem()).startTaskSetterDialog(task);
+                    }
+                });
     }
 
     private class TaskPagerAdapter extends FragmentStateAdapter {
         List<Task> mTaskList;
 
-        public TaskPagerAdapter(@NonNull FragmentActivity fragmentActivity, List taskList) {
+        public TaskPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
             super(fragmentActivity);
-            mTaskList = taskList;
+       //     mTaskList = taskList;
         }
 
         @NonNull

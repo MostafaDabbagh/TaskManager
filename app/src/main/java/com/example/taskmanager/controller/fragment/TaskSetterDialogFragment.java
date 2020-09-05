@@ -23,6 +23,7 @@ import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
 import com.example.taskmanager.utils.DateUtils;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -74,7 +75,7 @@ public class TaskSetterDialogFragment extends DialogFragment {
                         intent.putExtra(EXTRA_CURRENT_TASK, mCurrentTask);
                         TaskListFragment fragment = (TaskListFragment) getTargetFragment();
                         fragment.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                 //       Toast.makeText(getActivity(), "OK!!", Toast.LENGTH_SHORT).show();
+                        //       Toast.makeText(getActivity(), "OK!!", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -94,14 +95,30 @@ public class TaskSetterDialogFragment extends DialogFragment {
             Date responseDate = (Date) data.getSerializableExtra(DatePickerDialogFragment.EXTRA_DATE_PICKED);
             GregorianCalendar newTimeGC = new GregorianCalendar();
             newTimeGC.setTime(responseDate);
-            mCurrentTask.setDate(newTimeGC.getTime());
+
+            GregorianCalendar settingDate = new GregorianCalendar();
+            settingDate.setTime(mCurrentTask.getDate());
+            settingDate.set(Calendar.YEAR, newTimeGC.get(Calendar.YEAR));
+            settingDate.set(Calendar.MONTH, newTimeGC.get(Calendar.MONTH));
+            settingDate.set(Calendar.DAY_OF_MONTH, newTimeGC.get(Calendar.DAY_OF_MONTH));
+            //            mCurrentTask.setDate(newTimeGC.getTime());
+            mCurrentTask.setDate(settingDate.getTime());
+
             mButtonDate.setText(DateUtils.getDateText(mCurrentTask.getDate()));
-        }
-        else if (requestCode == REQUEST_CODE_TIME_PICKER) {
+        } else if (requestCode == REQUEST_CODE_TIME_PICKER) {
             Date responseDate = (Date) data.getSerializableExtra(TimePickerDialogFragment.EXTRA_TIME_PICKED);
-            GregorianCalendar newTimeGC = new GregorianCalendar();
-            newTimeGC.setTime(responseDate);
-            mCurrentTask.setDate(newTimeGC.getTime());
+            GregorianCalendar settingDate = new GregorianCalendar();
+            settingDate.setTime(responseDate);
+
+            GregorianCalendar oldDate = new GregorianCalendar();
+            settingDate.setTime(responseDate);
+            settingDate.set(Calendar.YEAR, oldDate.get(Calendar.YEAR));
+            settingDate.set(Calendar.MONTH, oldDate.get(Calendar.MONTH));
+            settingDate.set(Calendar.DAY_OF_MONTH, oldDate.get(Calendar.DAY_OF_MONTH));
+
+            //            mCurrentTask.setDate(newTimeGC.getTime());
+            mCurrentTask.setDate(settingDate.getTime());
+
             mButtonTime.setText(DateUtils.getTimeText(mCurrentTask.getDate()));
         }
 
@@ -120,7 +137,8 @@ public class TaskSetterDialogFragment extends DialogFragment {
         mButtonDate.setText(dateStr);
         mButtonTime.setText(timeStr);
         mEditTextTitle.setText(mCurrentTask.getTitle());
-        mEditTextDescription.setText(mCurrentTask.getDescrptionn());
+        if (mCurrentTask.getDescrptionn() != null)
+            mEditTextDescription.setText(mCurrentTask.getDescrptionn());
         if (mCurrentTask.getState() == State.TODO)
             mRadioGroupStates.check(R.id.radio_button_todo);
         else if (mCurrentTask.getState() == State.DOING)
