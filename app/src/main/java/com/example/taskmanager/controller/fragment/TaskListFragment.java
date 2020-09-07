@@ -5,24 +5,26 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.taskmanager.R;
 import com.example.taskmanager.Repository.TaskDBRepository;
-import com.example.taskmanager.Repository.TaskRepository;
-import com.example.taskmanager.Repository.UserRepository;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
+import com.example.taskmanager.model.User;
 import com.example.taskmanager.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -32,16 +34,19 @@ public class TaskListFragment extends Fragment {
 
     public static final String ARG_STATE = "com.example.taskmanager.controller.fragment.state";
     public static final int REQUEST_CODE_TASK_SETTER_DIALOG_FRAGMENT = 0;
+    public static final String ARG_CURRENT_USER = "currentUser";
 
     private RecyclerView mRecyclerView;
 
     private TaskAdapter mTaskAdapter;
     private State mFragmentTasksState;
     private List mFragmentTasks;
+    private User mCurrentUser;
 
-    public static TaskListFragment newInstance(State state) {
+    public static TaskListFragment newInstance(State state, User currentUser) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_STATE, state);
+        args.putSerializable(ARG_CURRENT_USER, currentUser);
         TaskListFragment fragment = new TaskListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -51,7 +56,9 @@ public class TaskListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFragmentTasksState = (State) getArguments().getSerializable(ARG_STATE);
+        mCurrentUser = (User) getArguments().getSerializable(ARG_CURRENT_USER);
         updateFragmentTaskList();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -70,11 +77,34 @@ public class TaskListFragment extends Fragment {
         update();
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_task_list, menu);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(mCurrentUser.getUsername());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_logout:
+                getActivity().finish();
+                return true;
+            case R.id.menu_item_search:
+
+                // implement search
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
     public void updateFragmentTaskList() {
 
         List<Task> userTasks = TaskDBRepository
                 .getInstance(getActivity())
-                .getUserTasks(UserRepository.getInstance(getActivity()).getCurrentUser().getUUID());
+                .getUserTasks(mCurrentUser.getUUID());
         List<Task> fragmentTasks = new ArrayList();
         for (int i = 0; i < userTasks.size(); i++) {
             if (userTasks.get(i).getState() == mFragmentTasksState)

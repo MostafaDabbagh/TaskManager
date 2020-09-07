@@ -88,7 +88,7 @@ public class TimePickerDialogFragment extends DialogFragment {
         mTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
             public void onTimeChanged(TimePicker timePicker, int i, int i1) {
-                calendar.set(Calendar.HOUR, i);
+                calendar.set(Calendar.HOUR_OF_DAY, i);
                 calendar.set(Calendar.MINUTE, i1);
                 GregorianCalendar gc = new GregorianCalendar();
                 gc.setTime(calendar.getTime());
