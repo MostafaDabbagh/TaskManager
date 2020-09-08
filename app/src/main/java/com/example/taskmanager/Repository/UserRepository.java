@@ -5,12 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
 
-import com.example.taskmanager.database.cursorwrapper.UserCursorWrapper;
+import com.example.taskmanager.database.DBSchema.UserTable;
 import com.example.taskmanager.database.UserDataBaseHelper;
+import com.example.taskmanager.database.cursorwrapper.UserCursorWrapper;
 import com.example.taskmanager.model.User;
-import com.example.taskmanager.database.DBSchema.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.UUID;
 public class UserRepository implements IDBRepository<User> {
 
     private static UserRepository sUserRepository;
-    private static Context sContext;
 
     public static UserRepository getInstance(Context context) {
         if (sUserRepository == null) {
@@ -30,8 +28,7 @@ public class UserRepository implements IDBRepository<User> {
     }
 
     private UserRepository(Context context) {
-        sContext = context.getApplicationContext();
-        mDatabase = new UserDataBaseHelper(sContext).getWritableDatabase();
+        mDatabase = new UserDataBaseHelper(context.getApplicationContext()).getWritableDatabase();
     }
 
     private SQLiteDatabase mDatabase;
@@ -69,7 +66,6 @@ public class UserRepository implements IDBRepository<User> {
             User user = userCursorWrapper.getUser();
             return user;
         } catch (CursorIndexOutOfBoundsException e) {
-            Toast.makeText(sContext, "Exception", Toast.LENGTH_SHORT).show();
             return null;
         } finally {
             cursor.close();
@@ -86,7 +82,6 @@ public class UserRepository implements IDBRepository<User> {
             User user = userCursorWrapper.getUser();
             return user;
         } catch (CursorIndexOutOfBoundsException e) {
-            Toast.makeText(sContext, "Exception", Toast.LENGTH_SHORT).show();
             return null;
         } finally {
             cursor.close();

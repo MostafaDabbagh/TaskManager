@@ -11,6 +11,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,10 +40,11 @@ public class TaskListFragment extends Fragment {
     public static final String ARG_CURRENT_USER = "currentUser";
 
     private RecyclerView mRecyclerView;
+    private LinearLayout mLayoutImageShow;
 
     private TaskAdapter mTaskAdapter;
     private State mFragmentTasksState;
-    private List mFragmentTasks;
+    private List<Task> mFragmentTasks;
     private User mCurrentUser;
 
     public static TaskListFragment newInstance(State state, User currentUser) {
@@ -69,6 +72,7 @@ public class TaskListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
         findViews(view);
         initRecyclerView();
+        updateImageShow();
         return view;
     }
 
@@ -93,13 +97,20 @@ public class TaskListFragment extends Fragment {
             case R.id.menu_item_search:
                 Intent intent = SearchActivity.newIntent(getActivity());
                 startActivity(intent);
-                // implement search
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
 
+    private void updateImageShow() {
+        if (mFragmentTasks.size() == 0) {
+            mRecyclerView.setVisibility(View.GONE);
+            mLayoutImageShow.setVisibility(View.VISIBLE);
+        } else {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mLayoutImageShow.setVisibility(View.GONE);
+        }
     }
 
     public void updateFragmentTaskList() {
@@ -130,13 +141,14 @@ public class TaskListFragment extends Fragment {
 
     public void update() {
         updateFragmentTaskList();
-
         mTaskAdapter.setTaskList(mFragmentTasks);
         mTaskAdapter.notifyDataSetChanged();
+        updateImageShow();
     }
 
     private void findViews(View view) {
         mRecyclerView = view.findViewById(R.id.recycler_view_task_list);
+        mLayoutImageShow = view.findViewById(R.id.image_show_layout);
     }
 
     @Override

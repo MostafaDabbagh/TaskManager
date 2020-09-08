@@ -16,14 +16,6 @@ public class Task implements Serializable {
     private String mDescrptionn;
     private final UUID mUserId;
 
-    public Task(State state, String title, Date date, UUID userId) {
-        mState = state;
-        mTitle = title;
-        mDate = date;
-        mUUID = UUID.randomUUID();
-        mUserId = userId;
-    }
-
     public Task(State state, String title, UUID userId) {
         mState = state;
         mTitle = title;

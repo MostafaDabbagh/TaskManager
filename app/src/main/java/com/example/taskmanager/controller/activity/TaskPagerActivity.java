@@ -28,12 +28,8 @@ import java.util.List;
 
 public class TaskPagerActivity extends AppCompatActivity {
 
-    public static final String EXTRA_NUMBER_OF_TASKS = "numberOfTasks";
-    public static final String EXTRA_TITLE = "title";
+    private static List<TaskListFragment> sFragmentList;
 
-    public static List<TaskListFragment> sFragmentList;
-
-    private TaskDBRepository mTaskDBRepository;
     private UserRepository mUserRepository;
     private User mCurrentUser;
 
@@ -53,7 +49,6 @@ public class TaskPagerActivity extends AppCompatActivity {
         findViews();
         setListeners();
         mUserRepository = UserRepository.getInstance(this);
-        mTaskDBRepository = TaskDBRepository.getInstance(this);
         mCurrentUser = mUserRepository.getCurrentUser();
         sFragmentList = new ArrayList<>();
         sFragmentList.add(TaskListFragment.newInstance(State.TODO, mCurrentUser));

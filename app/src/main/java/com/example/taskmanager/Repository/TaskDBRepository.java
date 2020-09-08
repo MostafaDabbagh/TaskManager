@@ -18,7 +18,6 @@ import java.util.UUID;
 
 public class TaskDBRepository {
     private static TaskDBRepository sRepository;
-    private static Context sContext;
 
     public static TaskDBRepository getInstance(Context context) {
         if (sRepository == null) {
@@ -28,7 +27,6 @@ public class TaskDBRepository {
     }
 
     private TaskDBRepository(Context context) {
-        sContext = context.getApplicationContext();
         mDatabase = new TaskDataBaseHelper(context.getApplicationContext()).getWritableDatabase();
     }
 
