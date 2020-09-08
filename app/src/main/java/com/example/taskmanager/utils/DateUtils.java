@@ -1,5 +1,6 @@
 package com.example.taskmanager.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -19,18 +20,16 @@ public class DateUtils {
     }
 
     public static String getDateText(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return "" + calendar.get(Calendar.YEAR) + "/"
-                + (calendar.get(Calendar.MONTH) + 1) + "/"
-                + calendar.get(Calendar.DAY_OF_MONTH);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        String dateStr = simpleDateFormat.format(date);
+        return dateStr;
     }
 
     public static String getTimeText(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return "" + calendar.get(Calendar.HOUR_OF_DAY) + ":"
-                + calendar.get(Calendar.MINUTE);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("kk:mm");
+        String timeStr = simpleDateFormat.format(date);
+        return timeStr;
+
     }
 }
 

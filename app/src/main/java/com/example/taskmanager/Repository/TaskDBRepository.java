@@ -5,13 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
 
-import com.example.taskmanager.database.cursorwrapper.TaskCursorWrapper;
+import com.example.taskmanager.database.DBSchema.TaskTable;
 import com.example.taskmanager.database.TaskDataBaseHelper;
+import com.example.taskmanager.database.cursorwrapper.TaskCursorWrapper;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
-import com.example.taskmanager.database.DBSchema.*;
 
 import java.util.ArrayList;
 import java.util.List;

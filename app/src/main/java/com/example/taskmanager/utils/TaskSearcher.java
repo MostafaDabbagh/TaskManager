@@ -68,6 +68,4 @@ public class TaskSearcher {
         }
         return resultList;
     }
-
-
 }

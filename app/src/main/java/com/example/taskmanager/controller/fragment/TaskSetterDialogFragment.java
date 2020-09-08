@@ -6,24 +6,21 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+
 import com.example.taskmanager.R;
-import com.example.taskmanager.controller.activity.TaskPagerActivity;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
 import com.example.taskmanager.utils.DateUtils;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -84,7 +81,6 @@ public class TaskSetterDialogFragment extends DialogFragment {
                     }
                 })
                 .create();
-
     }
 
     @Override
@@ -95,33 +91,19 @@ public class TaskSetterDialogFragment extends DialogFragment {
             Date responseDate = (Date) data.getSerializableExtra(DatePickerDialogFragment.EXTRA_DATE_PICKED);
             GregorianCalendar newTimeGC = new GregorianCalendar();
             newTimeGC.setTime(responseDate);
-
-            GregorianCalendar settingDate = new GregorianCalendar();
-            settingDate.setTime(mCurrentTask.getDate());
-            settingDate.set(Calendar.YEAR, newTimeGC.get(Calendar.YEAR));
-            settingDate.set(Calendar.MONTH, newTimeGC.get(Calendar.MONTH));
-            settingDate.set(Calendar.DAY_OF_MONTH, newTimeGC.get(Calendar.DAY_OF_MONTH));
-            //            mCurrentTask.setDate(newTimeGC.getTime());
-            mCurrentTask.setDate(settingDate.getTime());
+            mCurrentTask.setDate(newTimeGC.getTime());
 
             mButtonDate.setText(DateUtils.getDateText(mCurrentTask.getDate()));
+            mButtonTime.setText(DateUtils.getTimeText(mCurrentTask.getDate()));
+
         } else if (requestCode == REQUEST_CODE_TIME_PICKER) {
             Date responseDate = (Date) data.getSerializableExtra(TimePickerDialogFragment.EXTRA_TIME_PICKED);
             GregorianCalendar settingDate = new GregorianCalendar();
             settingDate.setTime(responseDate);
-
-            GregorianCalendar oldDate = new GregorianCalendar();
-            settingDate.setTime(responseDate);
-            settingDate.set(Calendar.YEAR, oldDate.get(Calendar.YEAR));
-            settingDate.set(Calendar.MONTH, oldDate.get(Calendar.MONTH));
-            settingDate.set(Calendar.DAY_OF_MONTH, oldDate.get(Calendar.DAY_OF_MONTH));
-
-            //            mCurrentTask.setDate(newTimeGC.getTime());
-            mCurrentTask.setDate(settingDate.getTime());
-
+            mCurrentTask.setDate(responseDate);
             mButtonTime.setText(DateUtils.getTimeText(mCurrentTask.getDate()));
+            mButtonDate.setText(DateUtils.getDateText(mCurrentTask.getDate()));
         }
-
     }
 
     private void setCurrentTask() {
@@ -132,10 +114,8 @@ public class TaskSetterDialogFragment extends DialogFragment {
     }
 
     private void initViews() {
-        String dateStr = mCurrentTask.getDate().toString().substring(0, 11) + mCurrentTask.getDate().toString().substring(30);
-        String timeStr = mCurrentTask.getDate().toString().substring(11, 30);
-        mButtonDate.setText(dateStr);
-        mButtonTime.setText(timeStr);
+        mButtonDate.setText(DateUtils.getDateText(mCurrentTask.getDate()));
+        mButtonTime.setText(DateUtils.getTimeText(mCurrentTask.getDate()));
         mEditTextTitle.setText(mCurrentTask.getTitle());
         if (mCurrentTask.getDescrptionn() != null)
             mEditTextDescription.setText(mCurrentTask.getDescrptionn());
@@ -145,7 +125,6 @@ public class TaskSetterDialogFragment extends DialogFragment {
             mRadioGroupStates.check(R.id.radio_button_doing);
         else if (mCurrentTask.getState() == State.DONE)
             mRadioGroupStates.check(R.id.radio_button_done);
-
     }
 
     private void findViews(View view) {
@@ -194,7 +173,6 @@ public class TaskSetterDialogFragment extends DialogFragment {
             }
         });
     }
-
 }
 
 

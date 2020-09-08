@@ -65,7 +65,6 @@ public class DatePickerDialogFragment extends DialogFragment {
                     }
                 })
                 .create();
-
     }
 
     private void initDatePicker() {
@@ -80,9 +79,15 @@ public class DatePickerDialogFragment extends DialogFragment {
             @Override
             public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
                 // Only i1 begins from 0
-                GregorianCalendar gc = new GregorianCalendar();
-                gc.set(i, i1, i2);
-                mCurrentDate = gc.getTime();
+                GregorianCalendar newDategGC = new GregorianCalendar();
+                GregorianCalendar currentDateGC = new GregorianCalendar();
+                currentDateGC.setTime(mCurrentDate);
+                newDategGC.set(i,
+                        i1,
+                        i2,
+                        currentDateGC.get(Calendar.HOUR_OF_DAY),
+                        currentDateGC.get(Calendar.MINUTE));
+                mCurrentDate = newDategGC.getTime();
             }
         });
     }
@@ -90,6 +95,4 @@ public class DatePickerDialogFragment extends DialogFragment {
     private void findViews(View view) {
         mDatePicker = view.findViewById(R.id.date_picker);
     }
-
-
 }
