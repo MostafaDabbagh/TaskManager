@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.taskmanager.R;
 import com.example.taskmanager.Repository.TaskDBRepository;
+import com.example.taskmanager.controller.activity.SearchActivity;
 import com.example.taskmanager.enums.State;
 import com.example.taskmanager.model.Task;
 import com.example.taskmanager.model.User;
@@ -90,7 +91,8 @@ public class TaskListFragment extends Fragment {
                 getActivity().finish();
                 return true;
             case R.id.menu_item_search:
-
+                Intent intent = SearchActivity.newIntent(getActivity());
+                startActivity(intent);
                 // implement search
 
                 return true;

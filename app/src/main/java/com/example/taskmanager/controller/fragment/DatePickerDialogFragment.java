@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.DatePicker;
 
 import com.example.taskmanager.R;
+import com.example.taskmanager.utils.DateUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -69,8 +70,9 @@ public class DatePickerDialogFragment extends DialogFragment {
 
     private void initDatePicker() {
         final Calendar calendar = Calendar.getInstance();
+        if (mCurrentDate == null)
+            mCurrentDate = DateUtils.getRandomDate();
         calendar.setTime(mCurrentDate);
-
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);

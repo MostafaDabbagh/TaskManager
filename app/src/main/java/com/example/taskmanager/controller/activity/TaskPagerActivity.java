@@ -34,7 +34,7 @@ public class TaskPagerActivity extends AppCompatActivity {
     public static List<TaskListFragment> sFragmentList;
 
     private TaskDBRepository mTaskDBRepository;
-    private UserRepository mUserRepository = UserRepository.getInstance(this);
+    private UserRepository mUserRepository;
     private User mCurrentUser;
 
     private ViewPager2 mViewPager2;

@@ -56,7 +56,6 @@ public class TaskDBRepository {
             Task task = taskCursorWrapper.getTask();
             return task;
         } catch (CursorIndexOutOfBoundsException e) {
-            Toast.makeText(sContext, "Exception", Toast.LENGTH_SHORT).show();
             return null;
         } finally {
             cursor.close();
